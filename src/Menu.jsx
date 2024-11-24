@@ -1,5 +1,24 @@
 import { Link } from "react-router-dom"
+import React, {useState} from "react";
+import {auth} from "./fireConfig";
+import { onAuthStateChanged} from "firebase/auth";
+import { Logout } from "@mui/icons-material";
+
 function Menu() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+        onAuthStateChanged(auth, (user) => {
+        return user ? setIsLoggedIn(true) : setIsLoggedIn(false);
+        });
+
+        const logOut=()=>{
+        auth.signOut().then(() => {
+        console.log('singOut');
+        }).catch((error) => {
+        console.log(error);
+        });
+        } 
+
     return (
         <nav className="navbar navbar-expand-lg bg-light">
             <div className="container-fluid">
@@ -26,6 +45,17 @@ navigation">
                             <Link className="nav-link" to="/addArticle">Ajout articles</Link>
                         </li>
                     </ul>
+                    {!isLoggedIn ?
+                        (
+                            <Link className="btn btn-outline-primary" to="/LoginClient">
+                                Log In
+                            </Link>
+                        ):(
+                            <button className="btn btn-outline-primary" onClick={()=>logOut()}>
+                                Log Out
+                            </button>
+                        )
+                    }
                     <form className="d-flex" role="search">
                         <input className="form-control me-2" type="search"
                             placeholder="Search" aria-label="Search" />
